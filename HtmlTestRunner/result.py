@@ -83,8 +83,8 @@ class _TestInfo(object):
         self.stderr = test_result._stderr_data
 
         self.is_subtest = subTest is not None
-
-        self.test_description = self.test_result.getDescription(test_method)
+        self.test_description = test_method.shortDescription()
+        #self.test_description = self.test_result.getDescription(test_method)
         self.test_exception_info = (
             '' if outcome in (self.SUCCESS, self.SKIP)
             else self.test_result._exc_info_to_string(
@@ -252,11 +252,10 @@ class HtmlTestResult(TextTestResult):
         """ Organize test results by TestCase module. """
 
         tests_by_testcase = {}
-
         subtest_names = set(self.subtests.keys())
         for test_name, subtests in self.subtests.items():
             subtest_info = _SubTestInfos(test_name, subtests)
-            testcase_name = ".".join(test_name.split(".")[:-1])
+            testcase_name = ".".join(test_name.split(".")[-1])
             if testcase_name not in tests_by_testcase:
                 tests_by_testcase[testcase_name] = []
             tests_by_testcase[testcase_name].append(subtest_info)
@@ -270,7 +269,7 @@ class HtmlTestResult(TextTestResult):
                     continue
                 if isinstance(test_info, tuple):  # TODO: does this ever occur?
                     test_info = test_info[0]
-                testcase_name = ".".join(test_info.test_id.split(".")[:-1])
+                testcase_name = ".".join(test_info.test_id.split(".")[1:-1])
                 if testcase_name not in tests_by_testcase:
                     tests_by_testcase[testcase_name] = []
                 tests_by_testcase[testcase_name].append(test_info)
@@ -422,8 +421,8 @@ class HtmlTestResult(TextTestResult):
 
         if exctype is test.failureException:
             # Skip assert*() traceback levels
-            length = self._count_relevant_tb_levels(tb)
-            msg_lines = traceback.format_exception(exctype, value, tb, length)
+            #length = self._count_relevant_tb_levels(tb)
+            msg_lines = traceback.format_exception(exctype, value, tb)
         else:
             msg_lines = traceback.format_exception(exctype, value, tb)
 
