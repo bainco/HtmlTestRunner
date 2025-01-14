@@ -365,7 +365,7 @@ class HtmlTestResult(TextTestResult):
                 else:
                     report_name_body = "{}_{}".format(testRunner.report_name, test_case_class_name)
                 self.generate_file(
-                    testRunner, report_name_body, html_file, verbose=verbose
+                    testRunner, report_name_body, html_file
                 )
 
         else:
@@ -387,9 +387,9 @@ class HtmlTestResult(TextTestResult):
                 report_name_body = testRunner.report_name
             else:
                 report_name_body = self.default_prefix + "_".join(strip_module_names(list(all_results.keys())))
-            self.generate_file(testRunner, report_name_body, html_file, verbose=verbose)
+            self.generate_file(testRunner, report_name_body, html_file)
 
-    def generate_file(self, testRunner, report_name, report, verbose = False):
+    def generate_file(self, testRunner, report_name, report):
         """ Generate the report file in the given path. """
         dir_to = testRunner.output
         if not os.path.exists(dir_to):
