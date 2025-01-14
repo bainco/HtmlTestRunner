@@ -2,6 +2,6 @@
 from .runner import HTMLTestRunner
 
 
-__author__ = """Ordanis Sanchez Suero"""
-__email__ = 'ordanisanchez@gmail.com'
-__version__ = '1.2.1'
+__author__ = """Ordanis Sanchez Suero + Connor Bain"""
+__email__ = ''
+__version__ = '2.0.0'

@@ -74,11 +74,11 @@ test_requirements = [
 
 setup(
     name='html-testRunner',
-    version='1.2.1',
+    version='2.0.0',
     description="A Test Runner in python, for Human Readable HTML Reports",
     long_description=__doc__,
-    author="Ordanis Sanchez Suero",
-    author_email='ordanisanchez@gmail.com',
+    author="Ordanis Sanchez Suero + Connor",
+    author_email='',
     url='https://github.com/oldani/HtmlTestRunner',
     packages=[
         'HtmlTestRunner',
