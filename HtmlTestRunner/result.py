@@ -84,6 +84,7 @@ class _TestInfo(object):
 
         self.is_subtest = subTest is not None
         self.test_description = test_method.shortDescription()
+        print(self.test_description)
         #self.test_description = self.test_result.getDescription(test_method)
         self.test_exception_info = (
             '' if outcome in (self.SUCCESS, self.SKIP)
@@ -363,7 +364,9 @@ class HtmlTestResult(TextTestResult):
                     report_name_body = self.default_prefix + test_case_class_name
                 else:
                     report_name_body = "{}_{}".format(testRunner.report_name, test_case_class_name)
-                self.generate_file(testRunner, report_name_body, html_file)
+                self.generate_file(
+                    testRunner, report_name_body, html_file, verbose=verbose
+                )
 
         else:
             header_info = self._get_header_info(
@@ -384,9 +387,9 @@ class HtmlTestResult(TextTestResult):
                 report_name_body = testRunner.report_name
             else:
                 report_name_body = self.default_prefix + "_".join(strip_module_names(list(all_results.keys())))
-            self.generate_file(testRunner, report_name_body, html_file)
+            self.generate_file(testRunner, report_name_body, html_file, verbose=verbose)
 
-    def generate_file(self, testRunner, report_name, report):
+    def generate_file(self, testRunner, report_name, report, verbose = False):
         """ Generate the report file in the given path. """
         dir_to = testRunner.output
         if not os.path.exists(dir_to):
@@ -397,7 +400,8 @@ class HtmlTestResult(TextTestResult):
         report_name += ".html"
 
         path_file = os.path.abspath(os.path.join(dir_to, report_name))
-        self.stream.writeln(os.path.relpath(path_file))
+        if testRunner.verbose:
+            self.stream.writeln(os.path.relpath(path_file))
         self.report_files.append(path_file)
         with open(path_file, 'w', encoding='utf-8') as report_file:
             report_file.write(report)
@@ -421,7 +425,7 @@ class HtmlTestResult(TextTestResult):
 
         if exctype is test.failureException:
             # Skip assert*() traceback levels
-            #length = self._count_relevant_tb_levels(tb)
+            # length = self._count_relevant_tb_levels(tb)
             msg_lines = traceback.format_exception(exctype, value, tb)
         else:
             msg_lines = traceback.format_exception(exctype, value, tb)

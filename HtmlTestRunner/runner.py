@@ -17,8 +17,9 @@ class HTMLTestRunner(TextTestRunner):
                  descriptions=True, failfast=False, buffer=False,
                  report_title=None, report_name=None, template=None, resultclass=None,
                  add_timestamp=True, open_in_browser=False,
-                 combine_reports=False, template_args=None):
+                 combine_reports=False, template_args=None, verbose=False):
         self.verbosity = verbosity
+        self.verbose = verbose
         self.output = output
         self.encoding = UTF8
 
@@ -64,9 +65,10 @@ class HTMLTestRunner(TextTestRunner):
                 # junit testsuite properties
                 result.properties = test.properties
 
-            self.stream.writeln()
-            self.stream.writeln("Running tests... ")
-            self.stream.writeln(result.separator2)
+            if self.verbose:
+                self.stream.writeln()
+                self.stream.writeln("Running tests... ")
+                self.stream.writeln(result.separator2)
 
             self.start_time = datetime.now()
             test(result)
@@ -74,11 +76,13 @@ class HTMLTestRunner(TextTestRunner):
             self.time_taken = stop_time - self.start_time
 
             result.printErrors()
-            self.stream.writeln(result.separator2)
+            if self.verbose:
+                self.stream.writeln(result.separator2)
             run = result.testsRun
-            self.stream.writeln("Ran {} test{} in {}".format(run,
-                                run != 1 and "s" or "", str(self.time_taken)[:7]))
-            self.stream.writeln()
+            if self.verbose:
+                self.stream.writeln("Ran {} test{} in {}".format(run,
+                                    run != 1 and "s" or "", str(self.time_taken)[:7]))
+                self.stream.writeln()
 
             expectedFails = len(result.expectedFailures)
             unexpectedSuccesses = len(result.unexpectedSuccesses)
@@ -86,14 +90,16 @@ class HTMLTestRunner(TextTestRunner):
 
             infos = []
             if not result.wasSuccessful():
-                self.stream.writeln("FAILED")
+                if self.verbose:
+                    self.stream.writeln("FAILED")
                 failed, errors = map(len, (result.failures, result.errors))
                 if failed:
                     infos.append("Failures={0}".format(failed))
                 if errors:
                     infos.append("Errors={0}".format(errors))
             else:
-                self.stream.writeln("OK")
+                if self.verbose:
+                    self.stream.writeln("OK")
 
             if skipped:
                 infos.append("Skipped={}".format(skipped))
@@ -102,13 +108,15 @@ class HTMLTestRunner(TextTestRunner):
             if unexpectedSuccesses:
                 infos.append("Unexpected Successes={}".format(unexpectedSuccesses))
 
-            if infos:
-                self.stream.writeln(" ({})".format(", ".join(infos)))
-            else:
-                self.stream.writeln("\n")
+            if self.verbose:
+                if infos:
+                    self.stream.writeln(" ({})".format(", ".join(infos)))
+                else:
+                    self.stream.writeln("\n")
 
-            self.stream.writeln()
-            self.stream.writeln('Generating HTML reports... ')
+                self.stream.writeln()
+                self.stream.writeln('Generating HTML reports... ')
+
             result.generate_reports(self)
             if self.open_in_browser:
                 import webbrowser
